@@ -57,7 +57,7 @@ TEST_F(BufferTest, zeroLengthTest)
 }
 
 
-TEST_F(BufferTest, appendAndEqualsTests)
+TEST_F(BufferTest, appendAndEqualsTests) //buffer.h
 {
         Stateplex::WriteBuffer *inputBuffer1 = new Stateplex::WriteBuffer(myActor);
         Stateplex::WriteBuffer *inputBuffer2 = new Stateplex::WriteBuffer(myActor);
@@ -65,7 +65,7 @@ TEST_F(BufferTest, appendAndEqualsTests)
         //append cString - Fails as it returns false when less characters
         inputBuffer1->append("Marja ");
         EXPECT_EQ(6, inputBuffer1->length());
-        //EXPECT_FALSE(inputBuffer1->equals("Marj"));//Fails
+        //EXPECT_FALSE(inputBuffer1->equals("Marj")); //Fails
         EXPECT_TRUE(inputBuffer1->equals("Marja "));
         EXPECT_FALSE(inputBuffer1->equals("Marja i"));
 
@@ -89,7 +89,7 @@ TEST_F(BufferTest, appendAndEqualsTests)
         delete inputBuffer2;
 }
 
-TEST_F(BufferTest, compareTests) //Fails
+TEST_F(BufferTest, compareTests) //buffer.h --Fail
 {
         Stateplex::WriteBuffer *buffer1 = new Stateplex::WriteBuffer(myActor);
         Stateplex::WriteBuffer *buffer2 = new Stateplex::WriteBuffer(myActor);
@@ -230,6 +230,7 @@ TEST_F(BufferTest, miscellaneousTests)
         EXPECT_EQ('c', buffer->charAt(2));
         Stateplex::String *myString = buffer->asString();
         EXPECT_STREQ("abcd", myString->chars());
+        EXPECT_STRNE("aBcd", myString->chars());
 
         EXPECT_EQ(3, buffer->offsetOf('d', 0));
 
