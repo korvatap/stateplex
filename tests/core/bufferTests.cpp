@@ -127,7 +127,7 @@ TEST_F(BufferTest, splitTest)//Fail -- buffer contains the original character st
         std::cout << "MyComment: buffer1 contains: " << myString->chars() << "\n";
         EXPECT_TRUE(buffer1->equals("Ritaharj"));
         EXPECT_TRUE(buffer1->equals("Ritaharju school"));
-        //EXPECT_EQ(8, elements->length());Fails actual length is 2
+        //EXPECT_EQ(8, elements->length()); Fails, since actual length is 2
 
         delete buffer1;
 }
