@@ -9,6 +9,8 @@
 #include "../../stateplex/core/dispatcher.h"
 #include "../../stateplex/core/actor.h"
 #include <iostream>
+#include "../../stateplex/core/types.h"
+//#include "../../stateplex/core/buffer.h"
 
 class AllocatorTests : public ::testing::Test
 {
@@ -18,30 +20,36 @@ protected:
 
         static void SetUpTestCase()
         {
-                dispatcher = new Stateplex::Dispatcher();
-                actor = new Stateplex::Actor(dispatcher);
+            //    dispatcher = new Stateplex::Dispatcher();
+            //    actor = new Stateplex::Actor(dispatcher);
         }
         static void TearDownTestCase()
         {
-                delete dispatcher;
-                delete actor;
+            //    delete dispatcher;
+            //    delete actor;
         }
 
         virtual void SetUp(){}
 
         virtual void TearDown(){}
 };
-/*
+
 TEST_F(AllocatorTests, FirstTest)
 {
         Stateplex::Allocator *myAllocator = new Stateplex::Allocator();
-        myAllocator->
+        Stateplex::Size memSize = 1024;
+        void *memory = myAllocator->allocate(memSize);
+        EXPECT_TRUE(memory);
+
+        myAllocator->deallocate(memory, memSize);
 }
-*/
+
 /*
-Size16 sliceSizeToIndex(Size size) const;
+        Size16 sliceSizeToIndex(Size size) const;
         Size sliceSizeFromIndex(Size16 index) const;
         Block *blockFromAllocation(void *memory) const;
+
+
         void allocateBlocks();
         void sliceBlock(Size16 index);
         void *allocateSlice(Size16 index);

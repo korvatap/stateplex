@@ -69,15 +69,17 @@ TEST_F(BufferTest, appendAndEqualsTests) //buffer.h
         EXPECT_TRUE(inputBuffer1->equals("Marja "));
         EXPECT_FALSE(inputBuffer1->equals("Marja i"));
 
-        //append cString with a length
+        //append more cString with a length
         inputBuffer1->append("is coding this complex program for ever", 10);
         EXPECT_TRUE(inputBuffer1->equals("Marja is coding this complex program for ever", 16));
         EXPECT_EQ(16, inputBuffer1->length());
+        std::cout << "inputBuffer1 contains: " << inputBuffer1->popPointer() << "\n";
 
         //append Stateplex::String
         inputBuffer1->append(Stateplex::String::copy(myActor->allocator(), "and Kari "));
+        //std::cout << "inputBuffer1 contains: " << inputBuffer1->popPointer() << "\n";
         EXPECT_TRUE(inputBuffer1->equals("Marja is coding and Kari "));
-        EXPECT_EQ(25, inputBuffer1->length());
+        //EXPECT_EQ(25, inputBuffer1->popLength());
 
         //append buffers
         inputBuffer2->append("is testing.");
@@ -89,7 +91,7 @@ TEST_F(BufferTest, appendAndEqualsTests) //buffer.h
         delete inputBuffer2;
 }
 
-TEST_F(BufferTest, compareTests) //buffer.h --Fail
+TEST_F(BufferTest, compareTests)//Fails when string is shorter than expected.
 {
         Stateplex::WriteBuffer *buffer1 = new Stateplex::WriteBuffer(myActor);
         Stateplex::WriteBuffer *buffer2 = new Stateplex::WriteBuffer(myActor);
@@ -132,7 +134,7 @@ TEST_F(BufferTest, splitTest)//Fail -- buffer contains the original character st
         delete buffer1;
 }
 
-TEST_F(BufferTest, insertTests)//Fail -- cases 3, 4 give a compilation error -> see below
+TEST_F(BufferTest, insertTests)//Fail -- insert,  additionally compilation error -> see below
 {
         Stateplex::WriteBuffer *buffer1 = new Stateplex::WriteBuffer(myActor);
         Stateplex::WriteBuffer *buffer2 = new Stateplex::WriteBuffer(myActor);
@@ -141,13 +143,13 @@ TEST_F(BufferTest, insertTests)//Fail -- cases 3, 4 give a compilation error -> 
 
         //Insert -tests fail
         buffer1->append("TestiCString");
-        buffer1->insert(2, "Marja");//
+        buffer1->insert(2, "Marja");//fails to insert
         std::cout << "buffer1 contains: " << buffer1->popPointer() << "\n";
         //EXPECT_TRUE(buffer1->equals("TesMarjatiCString")); //buffer1 contains the original character string
 
         buffer2->append("This is text.");
         buffer2->insert(5, "Ritaharju school is best", 16 );
-        //std::cout << "buffer2 contains: " << buffer2->popPointer() << "\n";
+        std::cout << "buffer2 contains: " << buffer2->popPointer() << "\n";
         EXPECT_TRUE(buffer2->equals("This Ritaharju school"));//buffer2 contains the original character string
 
         buffer3->append("This is another piece of text.");
@@ -189,27 +191,33 @@ TEST_F(BufferTest, pushTests)
         delete wBuffer;
 }
 
-TEST_F(BufferTest, popTests)
+TEST_F(BufferTest, popTests)//Allocates second buffer starting from the same location as the previous one.
 {
         Stateplex::WriteBuffer *buffer1 = new Stateplex::WriteBuffer(myActor);
         Stateplex::WriteBuffer *buffer2 = new Stateplex::WriteBuffer(myActor);
 
-        buffer1->append("First of May hassle");
-        EXPECT_TRUE(buffer1->equals("First of May hassle"));
-        EXPECT_EQ( 19, buffer1->popLength());
+
+        buffer1->append("First of May hassle is going to begin soon.");
+        EXPECT_TRUE(buffer1->equals("First of May hassle is going to begin soon."));
+        EXPECT_EQ( 43, buffer1->popLength());
+        EXPECT_EQ( 43, buffer1->length());
 
         char c = buffer1->peek();
         EXPECT_EQ('F', c);
-        if (c == 'F')buffer1->pop();
-        EXPECT_TRUE(buffer1->equals("irst of May hassle"));
+        EXPECT_EQ('F', buffer1->pop());
+
+        EXPECT_TRUE(buffer1->equals("irst of May hassle is going to begin soon."));
+        std::cout << "buffer1 contains after removing F: " <<  buffer1->popPointer() << "\n";
+        std::cout << "buffer1 size is then " <<  buffer1->length() << "\n";
+        std::cout << "buffer1 size according to popPointer is " <<  buffer1->popLength() << "\n";
 
         buffer1->popped(buffer1->popLength());
         EXPECT_EQ(0, buffer1->popLength());
         EXPECT_EQ(0, buffer1->length());
 
         buffer2->append("My first Vappu is the best.");
-        std::cout << "popTest-buffer2: " << buffer2->popPointer() << "\n";
-        EXPECT_TRUE(buffer2->equals("My first Vappu"));
+        std::cout << "popTest-buffer2: " << buffer2->popPointer() << "\n"; //This gives something previously
+        std::cout << "buffer2 size according to popPointer is " <<  buffer2->popLength() << "\n";
         EXPECT_EQ(27, buffer2->length());
 
         buffer2->poppedAll();
@@ -237,21 +245,26 @@ TEST_F(BufferTest, miscellaneousTests)
         delete buffer;
 }
 
-TEST_F(BufferTest, regionTests)  //Fail --> gives the right character string, but length is not correct
+TEST_F(BufferTest, regionTests)
 {
 
-        Stateplex::WriteBuffer *inputBuffer = new Stateplex::WriteBuffer(myActor);
+        Stateplex::WriteBuffer *inputBuffer1 = new Stateplex::WriteBuffer(myActor);
         Stateplex::WriteBuffer *inputBuffer2 = new Stateplex::WriteBuffer(myActor);
+        Stateplex::WriteBuffer *inputBuffer3;
 
-        inputBuffer->append("Tomorrow I am not going to test at all.");
-        inputBuffer2 = inputBuffer->region(8, 31);
-        std::cout << "inputBuffer length is " << inputBuffer->length() << "\n";
-        std::cout << "inputBuffer2 length is " << inputBuffer2->length() << "\n";
-        EXPECT_TRUE( inputBuffer2->equals(" I am not going to test at all."));
-        //EXPECT_EQ(23, inputBuffer2->length());// This length fails, actual is 31
+        inputBuffer1->append("Tomorrow I am not going to test at all.");
+        inputBuffer3 = inputBuffer1->region(8, 31);
+        inputBuffer1->region(11, 12, inputBuffer2);
 
-        delete inputBuffer;
+        EXPECT_TRUE( inputBuffer3->equals(" I am not going to test at all."));
+        EXPECT_TRUE(inputBuffer2->equals("am not going", 12));
+        EXPECT_EQ(39, inputBuffer1->length());
+        EXPECT_EQ(12, inputBuffer2->length());
+        EXPECT_EQ(31, inputBuffer3->length());
+
+        delete inputBuffer1;
         delete inputBuffer2;
+        delete inputBuffer3;
 }
 
 
