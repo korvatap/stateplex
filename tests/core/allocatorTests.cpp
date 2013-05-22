@@ -38,10 +38,10 @@ TEST_F(AllocatorTests, FirstTest)
 {
         Stateplex::Allocator *myAllocator = new Stateplex::Allocator();
         Stateplex::Size memSize = 1024;
-        void *memory = myAllocator->allocate(memSize);
-        EXPECT_TRUE(memory);
+        void *myMemory = myAllocator->allocate(memSize);
+        EXPECT_TRUE(myMemory);
 
-        myAllocator->deallocate(memory, memSize);
+        myAllocator->deallocate(myMemory, memSize);
 }
 
 /*
