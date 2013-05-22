@@ -119,19 +119,26 @@ TEST_F(BufferTest, compareTests)//Fails when string is shorter than expected.
         delete buffer4;
 }
 
-TEST_F(BufferTest, splitTest)//Fail -- buffer contains the original character string, 16 characters as 8 characters expected
+TEST_F(BufferTest, splitTest)//Fail -- when give an array as argument, it gives a segmentation fault
 {
         Stateplex::WriteBuffer *buffer1 = new Stateplex::WriteBuffer(myActor);
+        buffer1->append("Ritaharju school is my favorite school.");
+        Stateplex::Array<Stateplex::WriteBuffer *> *myElements = buffer1->split(' ', 4);
 
-        buffer1->append("Ritaharju school");
-        Stateplex::Array<Stateplex::WriteBuffer *> *elements = buffer1->split('j', 8);
-        Stateplex::String *myString = buffer1->asString();
-        std::cout << "MyComment: buffer1 contains: " << myString->chars() << "\n";
-        EXPECT_TRUE(buffer1->equals("Ritaharj"));
-        EXPECT_TRUE(buffer1->equals("Ritaharju school"));
-        //EXPECT_EQ(8, elements->length()); Fails, since actual length is 2
+        EXPECT_EQ(4, myElements->length());
+        EXPECT_STREQ("Ritaharju", myElements->element(0)->asString()->chars());
+        EXPECT_STREQ("school", myElements->element(1)->asString()->chars());
+        EXPECT_STREQ("is", myElements->element(2)->asString()->chars());
+        EXPECT_STREQ("my favorite school.", myElements->element(3)->asString()->chars());
+
+        Stateplex::WriteBuffer *buffer2 = new Stateplex::WriteBuffer(myActor);
+        buffer2->append("Blueberry pie is my favorite desert.");
+        Stateplex::Array<Stateplex::WriteBuffer *> *elements;
+        //Stateplex::Size aSize = buffer2->split(' ', elements);//Gives Segmentation fault (core dumped)
+        //  EXPECT_EQ(36, aSize);
 
         delete buffer1;
+        delete buffer2;
 }
 
 TEST_F(BufferTest, insertTests)//Fail -- insert,  additionally compilation error -> see below
@@ -217,7 +224,8 @@ TEST_F(BufferTest, popTests)//Allocates second buffer starting from the same loc
 
         buffer2->append("My first Vappu is the best.");
         std::cout << "popTest-buffer2: " << buffer2->popPointer() << "\n"; //This gives something previously
-        std::cout << "buffer2 size according to popPointer is " <<  buffer2->popLength() << "\n";
+        std::cout << "buffer2 size according to popLength is " <<  buffer2->popLength() << "\n";
+        std::cout << "buffer1 contains: " <<  buffer1->popPointer() << "\n";
         EXPECT_EQ(27, buffer2->length());
 
         buffer2->poppedAll();
