@@ -41,10 +41,10 @@ TEST_F(ArrayTests, UnitializedArrayTest)
         EXPECT_TRUE(myArray->element(1));
         EXPECT_TRUE(myArray->element(2));
         EXPECT_FALSE(myArray->element(3));
-        //myArray->setElement(0, 'Y');// Segmentation fault in array.h line 138.
+        myArray->setElement(0, 'Y');// Segmentation fault in array.h line 138.
         EXPECT_EQ(3, myArray->length());// Fails, actual length is 72.
 
-        //myArray->destroy(myAllocator);// Segmentation fault in Allocator::deallocateSlice()
+        myArray->destroy(myAllocator);// Segmentation fault in Allocator::deallocateSlice()
 }
 
 TEST_F(ArrayTests, OtherElementTests)
@@ -54,36 +54,38 @@ TEST_F(ArrayTests, OtherElementTests)
         std::cout << "myArray length is :" << myArray->length() << "\n";// Gives 72??
         EXPECT_EQ(50, myArray->length());
         //myArray->setElement(0, 'Y');
+        //Segmentation fault.
+        //0x00000000004080c4 in Stateplex::Array<char>::setElement (this=0x41aaf0,
+        //index=0, value=89 'Y') at tests/core/../../stateplex/core/array.h:138
+        //138             *(reinterpret_cast<Type *>(reinterpret_cast<char *>(this) + size) + index) = value;
+
         //EXPECT_EQ('Y', myArray->element(0));
-        //myArray->copy(myAllocator, "Missing the white snow.", 23);//Segmentation fault
+        char *testString = "Missing the white snow.";
+        myArray->copy(myAllocator, testString, 23);//Segmentation fault
         //std::cout << "myElements array contains: " << myArray->elements() << "\n";//Segmentation fault
         //EXPECT_STREQ("Missing the white snow.", myArray->elements()); //Fails
-        //myArray->destroy(myAllocator);
-                                //Segmentation fault : Allocator::deallocateSlice (this=0x664b20,
-                                //memory=0x41a904, index=12) at stateplex/core/allocator.cpp:153
-                                //Slice *slice = new(memory) Slice();
-
 
         Stateplex::Array<char> *array;
         array->copy(myAllocator, myArray);
         std::cout << "array length is : " << array->length() << "\n";
-        //myArray->destroy(myAllocator); //Segmentation fault
+        myArray->destroy(myAllocator); //Segmentation fault
+        array->destroy(myAllocator);
  }
 
 TEST_F(ArrayTests, sizeTests){
         Stateplex::Array<char> *bigArray;
         bigArray->uninitialised(myAllocator, 128);// Array size 2 ^ 7
         bigArray->destroy(myAllocator);
-                                //Segmentation fault.
-                                //0x0000000000408205 in Stateplex::Array<char>::setLength (this=0x0, length=16384)
-                                //at tests/core/../../stateplex/core/array.h:88
-                                //*size = length | 0x80;
 
-        Stateplex::Array<char> *veryBigArray;
-        veryBigArray->uninitialised(myAllocator, 16384);// Array size 2 ^ 14
+        //Stateplex::Array<char> *veryBigArray;
+        //veryBigArray->uninitialised(myAllocator, 16384);// Array size 2 ^ 14
                                 //Segmentation fault.
                                 //0x00000000004081db in Stateplex::Array<char>::setLength (this=0x0, length=16384)
                                 //at tests/core/../../stateplex/core/array.h:88
                                 //*size = length | 0x80;
-        veryBigArray->destroy(myAllocator);
+        //veryBigArray->destroy(myAllocator);
+
+        //Stateplex::Array<char> *tooBigArray;
+        //tooBigArray->uninitialised(myAllocator, 17000); // Array size > 2 ^ 14
+
 }

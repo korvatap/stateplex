@@ -12,6 +12,11 @@
 #include "../../stateplex/core/types.h"
 //#include "../../stateplex/core/buffer.h"
 
+/**
+ * Unit tests related to allocator.h and allocator.cpp
+ *
+ **/
+
 class AllocatorTests : public ::testing::Test
 {
 protected:
