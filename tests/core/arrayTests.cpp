@@ -68,9 +68,7 @@ TEST_F(ArrayTests, OtherElementTests)
 
         Stateplex::String *tString;
         tString->copy(stringAllocator, "Missing the white snow now!");
-        T->copy(anotherAllocator, tString->chars(), 7);//Segmentation fault
-        //std::cout << "myElements array contains: " << anotherArray->elements() << "\n";//Segmentation fault
-        //EXPECT_STREQ("Missing the white snow.", anotherArray->elements()); //Fails
+        T->copy(anotherAllocator, tString->chars(), 7);/
 
         Stateplex::Array<char> *array;
         array->uninitialised(newAllocator, 50);
