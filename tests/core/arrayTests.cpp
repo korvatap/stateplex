@@ -35,7 +35,7 @@ Stateplex::Allocator *ArrayTests::myAllocator;
 TEST_F(ArrayTests, UnitializedArrayTest)
 {
         Stateplex::Array<char> *myArray;
-        myArray->uninitialised(myAllocator, 3);
+        myArray = Stateplex::Array<char>::uninitialised(myAllocator, 3);
 
         EXPECT_TRUE(myArray);
         EXPECT_TRUE(myArray->element(0));
@@ -49,52 +49,44 @@ TEST_F(ArrayTests, UnitializedArrayTest)
 
 TEST_F(ArrayTests, OtherElementTests)
 {
-        Stateplex::Allocator *anotherAllocator = new Stateplex::Allocator();
-        Stateplex::Allocator *newAllocator = new Stateplex::Allocator();
-        Stateplex::Allocator *stringAllocator = new Stateplex::Allocator();
-
         Stateplex::Array<char> *T;
-        T->uninitialised(anotherAllocator, 50);
+        T = Stateplex::Array<char>::uninitialised(myAllocator, 50);
+        EXPECT_EQ(50, T->length());
 
-        //EXPECT_EQ(50, T->length());
-                //Segmentation fault.
-                //0x0000000000408646 in Stateplex::Array<char>::getLength (this=0x0, sizeOfLength=0x7fffffffde98)
-                //   at tests/core/../../stateplex/core/array.h:69
-                //69              if ((*size & 0x80) == 0) {
-
-        //T->setElement(0, 'Y');
-        //std::cout << "T->element(0) is: " << T->element(0) << "\n";
-        //EXPECT_EQ('Y', T->element(0));
+        T->setElement(0, 'Y');
+        EXPECT_EQ('Y', T->element(0));
 
         Stateplex::String *tString;
-        tString->copy(stringAllocator, "Missing the white snow now!");
-        T->copy(anotherAllocator, tString->chars(), 7);/
+        tString = Stateplex::String::copy(myAllocator, "Missing the white snow now!");
+        T->copy(myAllocator, tString->chars(), 7);
+        EXPECT_EQ("Missing", tString->chars());
 
         Stateplex::Array<char> *array;
-        array->uninitialised(newAllocator, 50);
-        array->copy(newAllocator, T);
-        std::cout << "array length is : " << array->length() << "\n";
+        array = Stateplex::Array<char>::uninitialised(myAllocator, 50);
+        array->copy(myAllocator, T);
+        std::cout << "Elements are: "<< array->elements() << "\n";
+        EXPECT_EQ(50, array->length());
+        //EXPECT_EQ("Missing", array->elements());
 
-        T->destroy(anotherAllocator);
-        array->destroy(newAllocator);
-        delete anotherAllocator;
-        delete newAllocator;
+        T->destroy(myAllocator);
+        array->destroy(myAllocator);
+        tString->destroy(myAllocator);
  }
+
 
 TEST_F(ArrayTests, sizeTests){
         Stateplex::Array<char> *bigArray;
-        bigArray->uninitialised(myAllocator, 128);// Array size 2 ^ 7
+        bigArray = Stateplex::Array<char>::uninitialised(myAllocator, 128);// Array size < 2 ^ 7
         bigArray->destroy(myAllocator);
+/*
+        Stateplex::Array<char> *veryBigArray;
+        veryBigArray = Stateplex::Array<char>::uninitialised(myAllocator, 16384);// Array size < 2 ^ 14
 
-        //Stateplex::Array<char> *veryBigArray;
-        //veryBigArray->uninitialised(myAllocator, 16384);// Array size 2 ^ 14
-                                //Segmentation fault.
-                                //0x00000000004081db in Stateplex::Array<char>::setLength (this=0x0, length=16384)
-                                //at tests/core/../../stateplex/core/array.h:88
-                                //*size = length | 0x80;
-        //veryBigArray->destroy(myAllocator);
+        veryBigArray->destroy(myAllocator);
 
-        //Stateplex::Array<char> *tooBigArray;
-        //tooBigArray->uninitialised(myAllocator, 17000); // Array size > 2 ^ 14
+        Stateplex::Array<char> *tooBigArray;
+        tooBigArray = Stateplex::Array<char>::uninitialised(myAllocator, 17000); // Array size > 2 ^ 14
 
+        tooBigArray->destroy(myAllocator);
+*/
 }
