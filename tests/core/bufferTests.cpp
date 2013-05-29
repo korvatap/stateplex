@@ -2,8 +2,9 @@
  * bufferTests.cpp
  *
  *  Created on: Apr 19, 2013
- *      Author: maaalto
+ *      Author: Marja Aalto
  */
+
 #include <iostream>
 #include <unistd.h>
 #include <fstream>

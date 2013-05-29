@@ -2,8 +2,9 @@
  * runalltests.cpp
  *
  *  Created on: Apr 19, 2013
- *      Author: maaalto
+ *      Author: Marja Aalto
  */
+
 #include "gtest/gtest.h"
 
 /*

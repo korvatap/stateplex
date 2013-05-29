@@ -2,8 +2,9 @@
  * bufferTests.cpp
  *
  *  Created on: Apr 19, 2013
- *      Author: maaalto
+ *      Author: Marja Aalto
  */
+
 #include <iostream>
 #include "gtest/gtest.h"
 #include "../../stateplex/core/list.h"

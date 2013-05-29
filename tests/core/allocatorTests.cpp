@@ -2,8 +2,9 @@
  * allocatorTests.cpp
  *
  *  Created on: May 8, 2013
- *      Author: maaalto
+ *      Author: Marja Aalto
  */
+
 #include "gtest/gtest.h"
 #include "../../stateplex/core/allocator.h"
 #include "../../stateplex/core/dispatcher.h"
